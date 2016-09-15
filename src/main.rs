@@ -1,25 +1,50 @@
 #[cfg(not(test))]
 fn main() {
-    println!("{:}", text_to_tokens("create function main").join(""));
+    println!("{:}",
+             text_to_tokens("create function main")
+                 .iter()
+                 .map(|ref tok| (*tok).to_string())
+                 .collect::<Vec<_>>()
+                 .join(""));
 }
 
-fn text_to_tokens(text: &str) -> Vec<String> {
+fn text_to_tokens(text: &'static str) -> Vec<Box<Token>> {
     let parts: Vec<&str> = text.split(" ").collect();
-    let mut tokens: Vec<String> = Vec::new();
+    let mut tokens: Vec<Box<Token>> = Vec::new();
 
     if parts.len() == 3 && parts[0] == "create" && parts[1] == "function" {
-        tokens.push("fn".to_string());
-        tokens.push(" ".to_string());
-        tokens.push(parts[2].to_string());
-        tokens.push("(".to_string());
-        tokens.push(")".to_string());
-        tokens.push(" ".to_string());
-        tokens.push("{".to_string());
-        tokens.push("\n".to_string());
-        tokens.push("}".to_string());
+        tokens.push(Box::new(SimpleToken::new("fn")));
+        tokens.push(Box::new(SimpleToken::new(" ")));
+        tokens.push(Box::new(SimpleToken::new(parts[2])));
+        tokens.push(Box::new(SimpleToken::new("(")));
+        tokens.push(Box::new(SimpleToken::new(")")));
+        tokens.push(Box::new(SimpleToken::new(" ")));
+        tokens.push(Box::new(SimpleToken::new("{")));
+        tokens.push(Box::new(SimpleToken::new("\n")));
+        tokens.push(Box::new(SimpleToken::new("}")));
     }
 
     tokens
+}
+
+trait Token {
+    fn to_string(&self) -> &'static str;
+}
+
+struct SimpleToken {
+    name: &'static str,
+}
+
+impl SimpleToken {
+    fn new(name: &'static str) -> SimpleToken {
+        SimpleToken { name: name }
+    }
+}
+
+impl Token for SimpleToken {
+    fn to_string(&self) -> &'static str {
+        self.name
+    }
 }
 
 #[cfg(test)]
@@ -33,7 +58,10 @@ mod tests {
 
     #[test]
     fn text_to_tokens_returns_function_tokens() {
-        let tokens: Vec<String> = text_to_tokens("create function foo");
+        let tokens: Vec<&'static str> = text_to_tokens("create function foo")
+            .iter()
+            .map(|ref tok| (*tok).to_string())
+            .collect();
         assert_eq!(vec!["fn", " ", "foo", "(", ")", " ", "{", "\n", "}"],
                    tokens);
     }
