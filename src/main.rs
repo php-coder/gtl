@@ -6,9 +6,7 @@ fn main() {
 fn text_to_tokens(text: &str) -> Vec<String> {
     let parts: Vec<&str> = text.split(" ").collect();
     let mut tokens: Vec<String> = Vec::new();
-    if parts.len() == 0 {
-        return tokens;
-    }
+
     if parts.len() == 3 && parts[0] == "create" && parts[1] == "function" {
         tokens.push("fn".to_string());
         tokens.push(" ".to_string());
@@ -20,6 +18,7 @@ fn text_to_tokens(text: &str) -> Vec<String> {
         tokens.push("\n".to_string());
         tokens.push("}".to_string());
     }
+
     tokens
 }
 
