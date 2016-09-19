@@ -1,11 +1,7 @@
 #[cfg(not(test))]
 fn main() {
     println!("{:}",
-             text_to_tokens("create function main")
-                 .iter()
-                 .map(|ref tok: &Box<Token>| (*tok).to_string())
-                 .collect::<Vec<_>>()
-                 .join(""));
+             tokens_to_string(text_to_tokens("create function main")));
 }
 
 fn text_to_tokens(text: &'static str) -> Vec<Box<Token>> {
@@ -25,6 +21,13 @@ fn text_to_tokens(text: &'static str) -> Vec<Box<Token>> {
     }
 
     tokens
+}
+
+fn tokens_to_string(tokens: Vec<Box<Token>>) -> String {
+    tokens.iter()
+        .map(|ref tok: &Box<Token>| (*tok).to_string())
+        .collect::<Vec<_>>()
+        .join("")
 }
 
 trait Token {
@@ -64,6 +67,30 @@ mod tests {
             .collect();
         assert_eq!(vec!["fn", " ", "foo", "(", ")", " ", "{", "\n", "}"],
                    tokens);
+    }
+
+    use super::Token;
+    use super::SimpleToken;
+    use super::tokens_to_string;
+
+    #[test]
+    fn tokens_to_string_returns_empty_string_for_empty_tokens() {
+        let tokens: Vec<Box<Token>> = Vec::new();
+        assert!(tokens_to_string(tokens) == "");
+    }
+
+    #[test]
+    fn tokens_to_string_returns_tokens_representation() {
+        let tokens: Vec<Box<Token>> = vec![Box::new(SimpleToken::new("fn")),
+                                           Box::new(SimpleToken::new(" ")),
+                                           Box::new(SimpleToken::new("main")),
+                                           Box::new(SimpleToken::new("(")),
+                                           Box::new(SimpleToken::new(")")),
+                                           Box::new(SimpleToken::new(" ")),
+                                           Box::new(SimpleToken::new("{")),
+                                           Box::new(SimpleToken::new("\n")),
+                                           Box::new(SimpleToken::new("}"))];
+        assert_eq!(tokens_to_string(tokens), "fn main() {\n}");
     }
 
 }
