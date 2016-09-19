@@ -3,7 +3,7 @@ fn main() {
     println!("{:}",
              text_to_tokens("create function main")
                  .iter()
-                 .map(|ref tok| (*tok).to_string())
+                 .map(|ref tok: &Box<Token>| (*tok).to_string())
                  .collect::<Vec<_>>()
                  .join(""));
 }
