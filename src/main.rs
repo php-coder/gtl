@@ -1,6 +1,6 @@
 #[cfg(not(test))]
 fn main() {
-    println!("{:}",
+    println!("{}",
              tokens_to_string(text_to_tokens("create function main")));
 }
 
