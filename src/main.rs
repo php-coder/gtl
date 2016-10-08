@@ -30,10 +30,16 @@ fn tokens_to_string(tokens: Vec<Box<Token>>) -> String {
         .join("")
 }
 
+fn code_to_tokens(_: String) -> Vec<SimpleToken> {
+    let tokens: Vec<SimpleToken> = Vec::new();
+    tokens
+}
+
 trait Token {
     fn to_string(&self) -> &'static str;
 }
 
+#[derive(Debug,PartialEq)]
 struct SimpleToken {
     name: &'static str,
 }
@@ -91,6 +97,30 @@ mod tests {
                                            Box::new(SimpleToken::new("\n")),
                                            Box::new(SimpleToken::new("}"))];
         assert_eq!(tokens_to_string(tokens), "fn main() {\n}");
+    }
+
+    use super::code_to_tokens;
+
+    #[test]
+    fn code_to_tokens_returns_empty_tokens_for_empty_code() {
+        assert!(code_to_tokens("".to_string()).len() == 0);
+    }
+
+    #[test]
+    #[ignore]
+    fn code_to_tokens_returns_function_tokens() {
+        let expected: Vec<SimpleToken> = vec![SimpleToken::new("fn"),
+                                              SimpleToken::new(" "),
+                                              SimpleToken::new("test"),
+                                              SimpleToken::new("("),
+                                              SimpleToken::new(")"),
+                                              SimpleToken::new(" "),
+                                              SimpleToken::new("{"),
+                                              SimpleToken::new("\n"),
+                                              SimpleToken::new("}")];
+        let tokens: Vec<SimpleToken> = code_to_tokens("fn test() { }".to_string());
+
+        assert_eq!(expected, tokens);
     }
 
 }
