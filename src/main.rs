@@ -30,29 +30,62 @@ fn tokens_to_string(tokens: Vec<Box<Token>>) -> String {
         .join("")
 }
 
-fn code_to_tokens(_: String) -> Vec<SimpleToken> {
-    let tokens: Vec<SimpleToken> = Vec::new();
-    tokens
+// TODO: add tests
+fn partition_string(string: String) -> Vec<String> {
+    let mut result: Vec<String> = Vec::new();
+    if string.is_empty() {
+        return result;
+    }
+
+    let mut start: usize = 0;
+    let mut after_separator: bool = false;
+
+    // this version is slow because it uses chars and not bytes, but it's correct
+    for (pos, c) in string.char_indices() {
+        if pos == 0 {
+            continue;
+        }
+        if c.is_whitespace() || c == '{' || c == '}' || c == '(' || c == ')' {
+            result.push(string[start..pos].to_string());
+            start = pos;
+            after_separator = true;
+        } else if after_separator {
+            result.push(string[start..pos].to_string());
+            start = pos;
+            after_separator = false;
+        }
+    }
+    result.push(string[start..string.len()].to_string());
+    result
+}
+
+fn code_to_tokens(code: String) -> Vec<SimpleToken> {
+    partition_string(code).into_iter()
+        .map(|part: String| SimpleToken::from_string(part))
+        .collect()
 }
 
 trait Token {
-    fn to_string(&self) -> &'static str;
+    fn to_string(&self) -> String;
 }
 
 #[derive(Debug,PartialEq)]
 struct SimpleToken {
-    name: &'static str,
+    name: String
 }
 
 impl SimpleToken {
     fn new(name: &'static str) -> SimpleToken {
+        SimpleToken { name: name.to_string() }
+    }
+    fn from_string(name: String) -> SimpleToken {
         SimpleToken { name: name }
     }
 }
 
 impl Token for SimpleToken {
-    fn to_string(&self) -> &'static str {
-        self.name
+    fn to_string(&self) -> String {
+        self.name.clone()
     }
 }
 
@@ -67,10 +100,10 @@ mod tests {
 
     #[test]
     fn text_to_tokens_returns_function_tokens() {
-        let tokens: Vec<&'static str> = text_to_tokens("create function foo")
+        let tokens: Vec<String> = text_to_tokens("create function foo")
             .iter()
             .map(|ref tok| (*tok).to_string())
-            .collect();
+            .collect::<Vec<_>>();
         assert_eq!(vec!["fn", " ", "foo", "(", ")", " ", "{", "\n", "}"],
                    tokens);
     }
@@ -107,7 +140,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     fn code_to_tokens_returns_function_tokens() {
         let expected: Vec<SimpleToken> = vec![SimpleToken::new("fn"),
                                               SimpleToken::new(" "),
@@ -118,7 +150,7 @@ mod tests {
                                               SimpleToken::new("{"),
                                               SimpleToken::new("\n"),
                                               SimpleToken::new("}")];
-        let tokens: Vec<SimpleToken> = code_to_tokens("fn test() { }".to_string());
+        let tokens: Vec<SimpleToken> = code_to_tokens("fn test() {\n}".to_string());
 
         assert_eq!(expected, tokens);
     }
