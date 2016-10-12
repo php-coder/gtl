@@ -114,7 +114,7 @@ mod tests {
     #[test]
     fn tokens_to_string_returns_empty_string_for_empty_tokens() {
         let tokens: Vec<Box<Token>> = Vec::new();
-        assert!(tokens_to_string(tokens) == "");
+        assert_eq!(tokens_to_string(tokens), "");
     }
 
     #[test]
