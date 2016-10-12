@@ -59,7 +59,8 @@ fn partition_string(string: String) -> Vec<String> {
 }
 
 fn code_to_tokens(code: String) -> Vec<SimpleToken> {
-    partition_string(code).into_iter()
+    partition_string(code)
+        .into_iter()
         .map(|part: String| SimpleToken::from_string(part))
         .collect()
 }
@@ -70,7 +71,7 @@ trait Token {
 
 #[derive(Debug,PartialEq)]
 struct SimpleToken {
-    name: String
+    name: String,
 }
 
 impl SimpleToken {
