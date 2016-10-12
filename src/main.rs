@@ -30,7 +30,6 @@ fn tokens_to_string(tokens: Vec<Box<Token>>) -> String {
         .join("")
 }
 
-// TODO: add tests
 fn partition_string(string: String) -> Vec<String> {
     let mut result: Vec<String> = Vec::new();
     if string.is_empty() {
@@ -130,6 +129,40 @@ mod tests {
                                            Box::new(SimpleToken::new("\n")),
                                            Box::new(SimpleToken::new("}"))];
         assert_eq!(tokens_to_string(tokens), "fn main() {\n}");
+    }
+
+    use super::partition_string;
+
+    #[test]
+    fn partition_string_returns_empty_vector_for_empty_string() {
+        assert!(partition_string("".to_string()).len() == 0);
+    }
+
+    #[test]
+    fn partition_string_returns_partitioned_string() {
+        assert_eq!(partition_string("(test){ }".to_string()),
+                   vec!["(".to_string(),
+                        "test".to_string(),
+                        ")".to_string(),
+                        "{".to_string(),
+                        " ".to_string(),
+                        "}".to_string()]);
+    }
+
+    #[test]
+    fn partition_string_should_handle_string_with_separators_only() {
+        assert_eq!(partition_string("   ".to_string()),
+                   vec![" ".to_string(), " ".to_string(), " ".to_string()]);
+    }
+
+    #[test]
+    fn partition_string_should_handle_utf8_string() {
+        assert_eq!(partition_string("忠犬ハチ公 (忠犬ハチ公)".to_string()),
+                   vec!["忠犬ハチ公".to_string(),
+                        " ".to_string(),
+                        "(".to_string(),
+                        "忠犬ハチ公".to_string(),
+                        ")".to_string()]);
     }
 
     use super::code_to_tokens;
