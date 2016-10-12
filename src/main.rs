@@ -42,12 +42,11 @@ fn partition_string(string: String) -> Vec<String> {
 
     // this version is slow because it uses chars and not bytes, but it's correct
     for (pos, c) in string.char_indices() {
-        if pos == 0 {
-            continue;
-        }
         if c.is_whitespace() || c == '{' || c == '}' || c == '(' || c == ')' {
-            result.push(string[start..pos].to_string());
-            start = pos;
+            if pos > 0 {
+                result.push(string[start..pos].to_string());
+                start = pos;
+            }
             after_separator = true;
         } else if after_separator {
             result.push(string[start..pos].to_string());
