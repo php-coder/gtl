@@ -4,28 +4,28 @@ fn main() {
              tokens_to_string(text_to_tokens("create function main")));
 }
 
-fn text_to_tokens(text: &str) -> Vec<Box<Token>> {
+fn text_to_tokens(text: &str) -> Vec<SimpleToken> {
     let parts: Vec<&str> = text.split(" ").collect();
-    let mut tokens: Vec<Box<Token>> = Vec::new();
+    let mut tokens: Vec<SimpleToken> = Vec::new();
 
     if parts.len() == 3 && parts[0] == "create" && parts[1] == "function" {
-        tokens.push(Box::new(SimpleToken::new("fn")));
-        tokens.push(Box::new(SimpleToken::new(" ")));
-        tokens.push(Box::new(SimpleToken::new(parts[2])));
-        tokens.push(Box::new(SimpleToken::new("(")));
-        tokens.push(Box::new(SimpleToken::new(")")));
-        tokens.push(Box::new(SimpleToken::new(" ")));
-        tokens.push(Box::new(SimpleToken::new("{")));
-        tokens.push(Box::new(SimpleToken::new("\n")));
-        tokens.push(Box::new(SimpleToken::new("}")));
+        tokens.push(SimpleToken::new("fn"));
+        tokens.push(SimpleToken::new(" "));
+        tokens.push(SimpleToken::new(parts[2]));
+        tokens.push(SimpleToken::new("("));
+        tokens.push(SimpleToken::new(")"));
+        tokens.push(SimpleToken::new(" "));
+        tokens.push(SimpleToken::new("{"));
+        tokens.push(SimpleToken::new("\n"));
+        tokens.push(SimpleToken::new("}"));
     }
 
     tokens
 }
 
-fn tokens_to_string(tokens: Vec<Box<Token>>) -> String {
+fn tokens_to_string(tokens: Vec<SimpleToken>) -> String {
     tokens.iter()
-        .map(|ref tok: &Box<Token>| (*tok).to_string())
+        .map(|ref tok: &SimpleToken| tok.to_string())
         .collect::<Vec<_>>()
         .join("")
 }
@@ -64,10 +64,6 @@ fn code_to_tokens(code: String) -> Vec<SimpleToken> {
         .collect()
 }
 
-trait Token {
-    fn to_string(&self) -> String;
-}
-
 #[derive(Debug,PartialEq)]
 struct SimpleToken {
     name: String,
@@ -80,9 +76,6 @@ impl SimpleToken {
     fn from_string(name: String) -> SimpleToken {
         SimpleToken { name: name }
     }
-}
-
-impl Token for SimpleToken {
     fn to_string(&self) -> String {
         self.name.clone()
     }
@@ -107,27 +100,26 @@ mod tests {
                    tokens);
     }
 
-    use super::Token;
     use super::SimpleToken;
     use super::tokens_to_string;
 
     #[test]
     fn tokens_to_string_returns_empty_string_for_empty_tokens() {
-        let tokens: Vec<Box<Token>> = Vec::new();
+        let tokens: Vec<SimpleToken> = Vec::new();
         assert_eq!(tokens_to_string(tokens), "");
     }
 
     #[test]
     fn tokens_to_string_returns_tokens_representation() {
-        let tokens: Vec<Box<Token>> = vec![Box::new(SimpleToken::new("fn")),
-                                           Box::new(SimpleToken::new(" ")),
-                                           Box::new(SimpleToken::new("main")),
-                                           Box::new(SimpleToken::new("(")),
-                                           Box::new(SimpleToken::new(")")),
-                                           Box::new(SimpleToken::new(" ")),
-                                           Box::new(SimpleToken::new("{")),
-                                           Box::new(SimpleToken::new("\n")),
-                                           Box::new(SimpleToken::new("}"))];
+        let tokens: Vec<SimpleToken> = vec![SimpleToken::new("fn"),
+                                            SimpleToken::new(" "),
+                                            SimpleToken::new("main"),
+                                            SimpleToken::new("("),
+                                            SimpleToken::new(")"),
+                                            SimpleToken::new(" "),
+                                            SimpleToken::new("{"),
+                                            SimpleToken::new("\n"),
+                                            SimpleToken::new("}")];
         assert_eq!(tokens_to_string(tokens), "fn main() {\n}");
     }
 
