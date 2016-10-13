@@ -30,6 +30,7 @@ fn tokens_to_string(tokens: Vec<Token>) -> String {
         .join("")
 }
 
+#[cfg(test)]
 fn partition_string(string: String) -> Vec<String> {
     let mut result: Vec<String> = Vec::new();
     if string.is_empty() {
@@ -57,6 +58,7 @@ fn partition_string(string: String) -> Vec<String> {
     result
 }
 
+#[cfg(test)]
 fn code_to_tokens(code: String) -> Vec<Token> {
     partition_string(code)
         .into_iter()
