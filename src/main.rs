@@ -4,7 +4,7 @@ fn main() {
              tokens_to_string(text_to_tokens("create function main")));
 }
 
-fn text_to_tokens(text: &'static str) -> Vec<Box<Token>> {
+fn text_to_tokens(text: &str) -> Vec<Box<Token>> {
     let parts: Vec<&str> = text.split(" ").collect();
     let mut tokens: Vec<Box<Token>> = Vec::new();
 
@@ -74,7 +74,7 @@ struct SimpleToken {
 }
 
 impl SimpleToken {
-    fn new(name: &'static str) -> SimpleToken {
+    fn new(name: &str) -> SimpleToken {
         SimpleToken { name: name.to_string() }
     }
     fn from_string(name: String) -> SimpleToken {
