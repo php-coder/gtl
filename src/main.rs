@@ -54,7 +54,7 @@ fn partition_string(string: String) -> Vec<String> {
             after_separator = false;
         }
     }
-    result.push(string[start..string.len()].to_string());
+    result.push(string[start..].to_string());
     result
 }
 
