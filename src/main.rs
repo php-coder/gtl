@@ -1,7 +1,27 @@
 #[cfg(not(test))]
+use std::fs::{OpenOptions, File};
+
+#[cfg(not(test))]
+// Write is required in order to use write_all()
+use std::io::{BufWriter, Write};
+
+#[cfg(not(test))]
 fn main() {
-    println!("{}",
-             tokens_to_string(text_to_tokens("create function main")));
+    let mut code: String = tokens_to_string(text_to_tokens("create function main"));
+    code.push_str("\n");
+
+    let filename: &'static str = "hello.rs";
+    let file: File = OpenOptions::new()
+        .write(true)
+        .create(true)
+        .open(filename)
+        .expect(&format!("ERROR: couldn't open file '{}' for writing", filename));
+    // TODO: why it doesn't work?
+    // let mut buffer: BufWriter<Write> = BufWriter::new(&file);
+    let mut buffer = BufWriter::new(&file);
+    buffer.write_all(&code.into_bytes())
+        .expect(&format!("ERROR: couldn't write to file '{}'", filename));
+
 }
 
 fn text_to_tokens(text: &str) -> Vec<Token> {
