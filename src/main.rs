@@ -32,9 +32,7 @@ fn write_str_to_file(filename: &str, text: &String) {
         .open(filename)
         .expect(&format!("ERROR: couldn't open file '{}' for writing", filename));
 
-    // TODO: why it doesn't work?
-    // let mut buffer: BufWriter<Write> = BufWriter::new(&file);
-    let mut buffer = BufWriter::new(&file);
+    let mut buffer: BufWriter<&File> = BufWriter::new(&file);
     buffer.write_all(text.as_bytes())
         .expect(&format!("ERROR: couldn't write to file '{}'", filename));
 }
