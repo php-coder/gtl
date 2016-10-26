@@ -1,4 +1,7 @@
 #[cfg(not(test))]
+use std::env;
+
+#[cfg(not(test))]
 use std::fs::{OpenOptions, File};
 
 #[cfg(not(test))]
@@ -10,18 +13,30 @@ fn main() {
     let mut code: String = tokens_to_string(text_to_tokens("create function main"));
     code.push_str("\n");
 
-    let filename: &'static str = "hello.rs";
+    // FIXME: from std::env::args() doc: "The returned iterator will panic
+    // during iteration if any argument to the process is not valid unicode"
+    let argv: Vec<String> = env::args().collect();
+    if argv.len() == 3 && argv[1] == "-f" && argv[2] != "-" {
+        write_str_to_file(&argv[2], &code);
+    } else {
+        print!("{}", code);
+    }
+
+}
+
+#[cfg(not(test))]
+fn write_str_to_file(filename: &str, text: &String) {
     let file: File = OpenOptions::new()
         .write(true)
         .create(true)
         .open(filename)
         .expect(&format!("ERROR: couldn't open file '{}' for writing", filename));
+
     // TODO: why it doesn't work?
     // let mut buffer: BufWriter<Write> = BufWriter::new(&file);
     let mut buffer = BufWriter::new(&file);
-    buffer.write_all(&code.into_bytes())
+    buffer.write_all(text.as_bytes())
         .expect(&format!("ERROR: couldn't write to file '{}'", filename));
-
 }
 
 fn text_to_tokens(text: &str) -> Vec<Token> {
