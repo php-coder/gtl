@@ -56,7 +56,7 @@ fn text_to_tokens(text: &str) -> Vec<Token> {
     tokens
 }
 
-fn tokens_to_string(tokens: Vec<Token>) -> String {
+fn tokens_to_string(tokens: &Vec<Token>) -> String {
     tokens.iter()
         .map(|ref tok: &Token| tok.to_string())
         .collect::<Vec<_>>()
@@ -139,13 +139,13 @@ mod tests {
 
     #[test]
     fn tokens_to_string_returns_empty_string_for_empty_tokens() {
-        let tokens: Vec<Token> = Vec::new();
+        let ref tokens: Vec<Token> = Vec::new();
         assert_eq!(tokens_to_string(tokens), "");
     }
 
     #[test]
     fn tokens_to_string_returns_tokens_representation() {
-        let tokens: Vec<Token> = vec![Token::new("fn"),
+        let ref tokens: Vec<Token> = vec![Token::new("fn"),
                                       Token::new(" "),
                                       Token::new("main"),
                                       Token::new("("),
