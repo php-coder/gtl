@@ -92,8 +92,8 @@ fn partition_string<'a>(string: &'a str) -> Vec<&'a str> {
 }
 
 #[cfg(test)]
-fn code_to_tokens(code: String) -> Vec<Token> {
-    partition_string(&code)
+fn code_to_tokens(code: &str) -> Vec<Token> {
+    partition_string(code)
         .into_iter()
         .map(|part: &str| Token::new(part))
         .collect()
@@ -186,7 +186,7 @@ mod tests {
 
     #[test]
     fn code_to_tokens_returns_empty_tokens_for_empty_code() {
-        assert!(code_to_tokens("".to_string()).len() == 0);
+        assert!(code_to_tokens("").len() == 0);
     }
 
     #[test]
@@ -200,7 +200,7 @@ mod tests {
                                         Token::new("{"),
                                         Token::new("\n"),
                                         Token::new("}")];
-        let tokens: Vec<Token> = code_to_tokens("fn test() {\n}".to_string());
+        let tokens: Vec<Token> = code_to_tokens("fn test() {\n}");
 
         assert_eq!(expected, tokens);
     }
