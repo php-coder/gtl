@@ -64,8 +64,8 @@ fn tokens_to_string(tokens: Vec<Token>) -> String {
 }
 
 #[cfg(test)]
-fn partition_string(string: String) -> Vec<String> {
-    let mut result: Vec<String> = Vec::new();
+fn partition_string<'a>(string: &'a String) -> Vec<&'a str> {
+    let mut result: Vec<&str> = Vec::new();
     if string.is_empty() {
         return result;
     }
@@ -77,25 +77,25 @@ fn partition_string(string: String) -> Vec<String> {
     for (pos, c) in string.char_indices() {
         if c.is_whitespace() || c == '{' || c == '}' || c == '(' || c == ')' {
             if pos > 0 {
-                result.push(string[start..pos].to_string());
+                result.push(&string[start..pos]);
                 start = pos;
             }
             after_separator = true;
         } else if after_separator {
-            result.push(string[start..pos].to_string());
+            result.push(&string[start..pos]);
             start = pos;
             after_separator = false;
         }
     }
-    result.push(string[start..].to_string());
+    result.push(&string[start..]);
     result
 }
 
 #[cfg(test)]
 fn code_to_tokens(code: String) -> Vec<Token> {
-    partition_string(code)
-        .iter()
-        .map(|part: &String| Token::new(part.as_ref()))
+    partition_string(&code)
+        .into_iter()
+        .map(|part: &str| Token::new(part))
         .collect()
 }
 
@@ -161,34 +161,25 @@ mod tests {
 
     #[test]
     fn partition_string_returns_empty_vector_for_empty_string() {
-        assert!(partition_string("".to_string()).len() == 0);
+        assert!(partition_string(&"".to_string()).len() == 0);
     }
 
     #[test]
     fn partition_string_returns_partitioned_string() {
-        assert_eq!(partition_string("(test){ }".to_string()),
-                   vec!["(".to_string(),
-                        "test".to_string(),
-                        ")".to_string(),
-                        "{".to_string(),
-                        " ".to_string(),
-                        "}".to_string()]);
+        assert_eq!(partition_string(&"(test){ }".to_string()),
+                   vec!["(", "test", ")", "{", " ", "}"]);
     }
 
     #[test]
     fn partition_string_should_handle_string_with_separators_only() {
-        assert_eq!(partition_string("   ".to_string()),
-                   vec![" ".to_string(), " ".to_string(), " ".to_string()]);
+        assert_eq!(partition_string(&"   ".to_string()),
+                   vec![" ", " ", " "]);
     }
 
     #[test]
     fn partition_string_should_handle_utf8_string() {
-        assert_eq!(partition_string("忠犬ハチ公 (忠犬ハチ公)".to_string()),
-                   vec!["忠犬ハチ公".to_string(),
-                        " ".to_string(),
-                        "(".to_string(),
-                        "忠犬ハチ公".to_string(),
-                        ")".to_string()]);
+        assert_eq!(partition_string(&"忠犬ハチ公 (忠犬ハチ公)".to_string()),
+                   vec!["忠犬ハチ公", " ", "(", "忠犬ハチ公", ")"]);
     }
 
     use super::code_to_tokens;
