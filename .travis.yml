@@ -7,3 +7,8 @@ rust:
 matrix:
   allow_failures:
     - rust: beta
+
+# Clone repository with a depth of 1 commit.
+# https://docs.travis-ci.com/user/customizing-the-build/#Git-Clone-Depth
+git:
+  depth: 1 # default: 50
