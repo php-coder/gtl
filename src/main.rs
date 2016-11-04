@@ -128,8 +128,8 @@ mod tests {
     fn text_to_tokens_returns_function_tokens() {
         let tokens: Vec<String> = text_to_tokens("create function foo")
             .iter()
-            .map(|ref tok| (*tok).to_string())
-            .collect::<Vec<_>>();
+            .map(|tok: &Token| tok.to_string())
+            .collect();
         assert_eq!(vec!["fn", " ", "foo", "(", ")", " ", "{", "\n", "}"],
                    tokens);
     }
