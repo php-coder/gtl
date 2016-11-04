@@ -95,7 +95,7 @@ fn partition_string(string: String) -> Vec<String> {
 fn code_to_tokens(code: String) -> Vec<Token> {
     partition_string(code)
         .iter()
-        .map(|part: &String| Token::new(&part))
+        .map(|part: &String| Token::new(part.as_ref()))
         .collect()
 }
 
@@ -105,8 +105,10 @@ struct Token {
 }
 
 impl Token {
-    fn new(name: &str) -> Token {
-        Token { name: name.to_string() }
+    fn new<S>(name: S) -> Token
+        where S: Into<String>
+    {
+        Token { name: name.into() }
     }
     fn to_string(&self) -> String {
         self.name.clone()
