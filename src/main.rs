@@ -64,7 +64,7 @@ fn tokens_to_string(tokens: Vec<Token>) -> String {
 }
 
 #[cfg(test)]
-fn partition_string<'a>(string: &'a String) -> Vec<&'a str> {
+fn partition_string<'a>(string: &'a str) -> Vec<&'a str> {
     let mut result: Vec<&str> = Vec::new();
     if string.is_empty() {
         return result;
@@ -161,18 +161,18 @@ mod tests {
 
     #[test]
     fn partition_string_returns_empty_vector_for_empty_string() {
-        assert!(partition_string(&"".to_string()).len() == 0);
+        assert!(partition_string("").len() == 0);
     }
 
     #[test]
     fn partition_string_returns_partitioned_string() {
-        assert_eq!(partition_string(&"(test){ }".to_string()),
+        assert_eq!(partition_string("(test){ }"),
                    vec!["(", "test", ")", "{", " ", "}"]);
     }
 
     #[test]
     fn partition_string_should_handle_string_with_separators_only() {
-        assert_eq!(partition_string(&"   ".to_string()),
+        assert_eq!(partition_string("   "),
                    vec![" ", " ", " "]);
     }
 
