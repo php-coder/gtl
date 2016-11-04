@@ -57,7 +57,7 @@ fn text_to_tokens(text: &str) -> Vec<Token> {
     tokens
 }
 
-fn tokens_to_string(tokens: &Vec<Token>) -> String {
+fn tokens_to_string(tokens: &[Token]) -> String {
     tokens.iter()
         .map(|tok: &Token| tok.to_string())
         .collect::<Vec<_>>()
