@@ -10,7 +10,8 @@ use std::io::{BufWriter, Write};
 
 #[cfg(not(test))]
 fn main() {
-    let mut code: String = tokens_to_string(text_to_tokens("create function main"));
+    let ref tokens: Vec<Token> = text_to_tokens("create function main");
+    let mut code: String = tokens_to_string(tokens);
     code.push_str("\n");
 
     // FIXME: from std::env::args() doc: "The returned iterator will panic
