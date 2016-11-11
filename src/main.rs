@@ -122,7 +122,7 @@ mod tests {
 
     #[test]
     fn text_to_tokens_returns_empty_tokens_for_empty_string() {
-        assert!(text_to_tokens("").len() == 0);
+        assert_eq!(text_to_tokens("").len(), 0);
     }
 
     #[test]
@@ -162,7 +162,7 @@ mod tests {
 
     #[test]
     fn partition_string_returns_empty_vector_for_empty_string() {
-        assert!(partition_string("").len() == 0);
+        assert_eq!(partition_string("").len(), 0);
     }
 
     #[test]
@@ -187,7 +187,7 @@ mod tests {
 
     #[test]
     fn code_to_tokens_returns_empty_tokens_for_empty_code() {
-        assert!(code_to_tokens("").len() == 0);
+        assert_eq!(code_to_tokens("").len(), 0);
     }
 
     #[test]
