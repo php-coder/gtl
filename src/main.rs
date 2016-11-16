@@ -9,6 +9,9 @@ use std::fs::{OpenOptions, File};
 use std::io::{BufWriter, Write};
 
 #[cfg(not(test))]
+use std::io::Error;
+
+#[cfg(not(test))]
 fn main() {
     let ref tokens: Vec<Token> = text_to_tokens("create function main");
     let mut code: String = tokens_to_string(tokens);
@@ -18,7 +21,16 @@ fn main() {
     // during iteration if any argument to the process is not valid unicode"
     let argv: Vec<String> = env::args().collect();
     if argv.len() == 3 && argv[1] == "-f" && argv[2] != "-" {
-        write_str_to_file(&argv[2], &code);
+        let file: &str = &argv[2];
+        let code: i32  = match write_str_to_file(file, &code) {
+            Ok(_)  => 0,
+            Err(e) => {
+                // TODO: write to stderr
+                println!("ERROR: couldn't write to file '{}': {}", file, e);
+                1
+            }
+        };
+        std::process::exit(code);
     } else {
         print!("{}", code);
     }
@@ -26,16 +38,16 @@ fn main() {
 }
 
 #[cfg(not(test))]
-fn write_str_to_file(filename: &str, text: &String) {
-    let file: File = OpenOptions::new()
+fn write_str_to_file(filename: &str, text: &String) -> Result<(), Error> {
+    let file: File = try!(OpenOptions::new()
         .write(true)
         .create(true)
-        .open(filename)
-        .expect(&format!("ERROR: couldn't open file '{}' for writing", filename));
+        .open(filename));
 
     let mut buffer: BufWriter<&File> = BufWriter::new(&file);
-    buffer.write_all(text.as_bytes())
-        .expect(&format!("ERROR: couldn't write to file '{}'", filename));
+    try!(buffer.write_all(text.as_bytes()));
+
+    Ok(())
 }
 
 fn text_to_tokens(text: &str) -> Vec<Token> {
