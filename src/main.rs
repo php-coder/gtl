@@ -5,8 +5,11 @@ use std::env;
 use std::fs::{OpenOptions, File};
 
 #[cfg(not(test))]
-// Write is required in order to use write_all()
+// Write is required in order to use writeln()/write_all()
 use std::io::{BufWriter, Write};
+
+#[cfg(not(test))]
+use std::io::stderr;
 
 #[cfg(not(test))]
 use std::io::Error;
@@ -25,8 +28,7 @@ fn main() {
         let code: i32  = match write_str_to_file(file, &code) {
             Ok(_)  => 0,
             Err(e) => {
-                // TODO: write to stderr
-                println!("ERROR: couldn't write to file '{}': {}", file, e);
+                writeln!(stderr(), "ERROR: couldn't write to file '{}': {}", file, e).unwrap();
                 1
             }
         };
